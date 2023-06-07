@@ -1,11 +1,14 @@
-package com.tobiasgoeschel.workshops.repows;
+package com.tobiasgoeschel.workshops.repows.application;
 
-import com.tobiasgoeschel.workshops.repows.cart.ShoppingCartCrudRepository;
-import com.tobiasgoeschel.workshops.repows.cart.ShoppingCartEntity;
-import com.tobiasgoeschel.workshops.repows.cart.ShoppingCartItemEntity;
-import com.tobiasgoeschel.workshops.repows.order.OrderCrudRepository;
-import com.tobiasgoeschel.workshops.repows.order.OrderEntity;
-import com.tobiasgoeschel.workshops.repows.order.OrderPositionEntity;
+import com.tobiasgoeschel.workshops.repows.RepoWsApplication;
+import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItemFactory;
+import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepository;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderCrudRepository;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderEntity;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderPositionEntity;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.*;
 import org.assertj.core.data.TemporalUnitOffset;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZoneOffset;
@@ -22,7 +26,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-@SpringBootTest()
+@SpringBootTest(classes = { RepoWsApplication.class, ShoppingCartController.class } )
+@ComponentScan(basePackages = {"com.tobiasgoeschel.workshops.repows.application", "com.tobiasgoeschel.workshops.repows.persistence"})
 class ShoppingCartControllerTest {
     private static final TemporalUnitOffset DATETIME_PRECISION = within( 500, ChronoUnit.MILLIS );
 
@@ -69,7 +74,7 @@ class ShoppingCartControllerTest {
 
     @Nested
     class GivenThereIsOneShoppingCart {
-        private ShoppingCartEntity shoppingCart;
+        private ShoppingCart shoppingCart;
 
         @BeforeEach
         public void setUp() {
@@ -99,20 +104,17 @@ class ShoppingCartControllerTest {
                 @Nested
                 class AndTheCartHasAnItem {
 
-                    private ShoppingCartItemEntity item;
+                    private ShoppingCartItem item;
 
                     @BeforeEach
                     public void setUp() {
-                        item = new ShoppingCartItemEntity();
-                        item.setId( UUID.randomUUID() );
-                        item.setLabel( "Thing" );
-                        item.setPrice( "10 €" );
+                        item = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
                         controller.addItem( shoppingCart.getId(), item );
                     }
 
                     @Test
                     void shouldReturnRequestedShoppingCartItems() {
-                        final List<ShoppingCartItemEntity> cartItems = controller.getCartItems( shoppingCart.getId() );
+                        final List<ShoppingCartItem> cartItems = controller.getCartItems( shoppingCart.getId() );
                         assertThat( cartItems.size() ).isEqualTo( 1 );
                         assertThat( cartItems.get( 0 ) )
                             .isEqualTo( item );
@@ -146,14 +148,11 @@ class ShoppingCartControllerTest {
                 @Nested
                 class AndTheCartHasAnItem {
 
-                    private ShoppingCartItemEntity item;
+                    private ShoppingCartItem item;
 
                     @BeforeEach
                     public void setUp() {
-                        item = new ShoppingCartItemEntity();
-                        item.setId( UUID.randomUUID() );
-                        item.setLabel( "Thing" );
-                        item.setPrice( "10 €" );
+                        item = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
                         controller.addItem( cartId, item );
                     }
 
@@ -275,18 +274,14 @@ class ShoppingCartControllerTest {
 
                 @Nested
                 class AndTheCartHasTwoMatchingItems {
-                    private List<ShoppingCartItemEntity> items;
+                    private List<ShoppingCartItem> items;
                     @BeforeEach
                     public void setUp() {
-                        ShoppingCartItemEntity item = new ShoppingCartItemEntity();
-                        item.setId( UUID.randomUUID() );
-                        item.setLabel( "Thing" );
-                        item.setPrice( "EUR 10" );
+                        final ShoppingCartItem item = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
+
                         controller.addItem( cartId, item );
-                        ShoppingCartItemEntity otherItem = new ShoppingCartItemEntity();
-                        otherItem.setId( UUID.randomUUID() );
-                        otherItem.setLabel( "Thing" );
-                        otherItem.setPrice( "EUR 10" );
+                        final ShoppingCartItem otherItem = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
+
                         controller.addItem( cartId, otherItem );
 
                         items = List.of(item, otherItem);

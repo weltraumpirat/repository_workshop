@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows.order;
+package com.tobiasgoeschel.workshops.repows.persistence.order;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows;
+package com.tobiasgoeschel.workshops.repows.application.config;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
