@@ -1,23 +1,20 @@
 package com.tobiasgoeschel.workshops.repows.usecase;
 
-import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.adapter.ShoppingCartsQuery;
-import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepository;
-import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartFactory;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartRepository;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 public class ShoppingCartsQueryImpl implements ShoppingCartsQuery {
-    private final ShoppingCartCrudRepository jpaCartsRepo;
+    private final ShoppingCartRepository repository;
 
-    public ShoppingCartsQueryImpl( ShoppingCartCrudRepository jpaCartsRepo ) {
-        this.jpaCartsRepo = jpaCartsRepo;
+    public ShoppingCartsQueryImpl( ShoppingCartRepository repository ) {
+        this.repository = repository;
     }
 
     @Override public List<ShoppingCart> invoke() {
-        return StreamSupport.stream( jpaCartsRepo.findAll().spliterator(), false )
-                   .map( ShoppingCartFactory::restore )
-                   .toList();
+        return repository.findAll();
+
     }
 }
