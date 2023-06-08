@@ -4,6 +4,7 @@ import com.tobiasgoeschel.workshops.repows.adapter.*;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
 import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartRepositoryJpa;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderRepositoryJpa;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class ShoppingCartController {
     private final RemoveShoppingCartItemCommand  removeShoppingCartItemCommand;
     private final CheckOutShoppingCartCommand    checkOutShoppingCartCommand;
     private final ShoppingCartRepositoryJpa      shoppingCartRepositoryJpa;
+    private final OrderRepositoryJpa             orderRepositoryJpa;
 
     public ShoppingCartController( final ShoppingCartsQuery shoppingCartsQuery,
                                    final ShoppingCartItemsQuery shoppingCartItemsQuery,
@@ -30,7 +32,8 @@ public class ShoppingCartController {
                                    final AddShoppingCartItemCommand addShoppingCartItemCommand,
                                    final RemoveShoppingCartItemCommand removeShoppingCartItemCommand,
                                    final CheckOutShoppingCartCommand checkOutShoppingCartCommand,
-                                   final ShoppingCartRepositoryJpa shoppingCartRepositoryJpa ) {
+                                   final ShoppingCartRepositoryJpa shoppingCartRepositoryJpa,
+                                   final OrderRepositoryJpa orderRepositoryJpa ) {
         this.shoppingCartsQuery = shoppingCartsQuery;
         this.shoppingCartItemsQuery = shoppingCartItemsQuery;
         this.createEmptyShoppingCartCommand = createEmptyShoppingCartCommand;
@@ -39,6 +42,7 @@ public class ShoppingCartController {
         this.removeShoppingCartItemCommand = removeShoppingCartItemCommand;
         this.checkOutShoppingCartCommand = checkOutShoppingCartCommand;
         this.shoppingCartRepositoryJpa = shoppingCartRepositoryJpa;
+        this.orderRepositoryJpa = orderRepositoryJpa;
     }
 
 
@@ -78,6 +82,9 @@ public class ShoppingCartController {
     @PostMapping( "/api/cart/{cartId}/checkout" )
     @Transactional
     public UUID checkOutShoppingCart( @PathVariable final UUID cartId ) {
-        return checkOutShoppingCartCommand.invoke( cartId );
+        final UUID orderId = checkOutShoppingCartCommand.invoke( cartId );
+        shoppingCartRepositoryJpa.flush();
+        orderRepositoryJpa.flush();
+        return orderId;
     }
 }

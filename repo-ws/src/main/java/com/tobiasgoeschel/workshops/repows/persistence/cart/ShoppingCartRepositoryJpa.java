@@ -76,6 +76,10 @@ public class ShoppingCartRepositoryJpa implements ShoppingCartRepository {
     @Override public void removeAll( final List<ShoppingCart> carts ) {
         carts.forEach( this::remove );
     }
+    @Override public void removeAll(  ) {
+        List<ShoppingCart> cartsToSave = List.copyOf(  carts );
+        cartsToSave.forEach( this::remove );
+    }
 
     public void flush() {
         final List<ShoppingCart> savedCarts = StreamSupport.stream( repository.findAll().spliterator(), false )

@@ -10,5 +10,6 @@ public interface ShoppingCartRepository {
     void remove(ShoppingCart cart);
     void removeAll( List<ShoppingCart> carts);
 
+    void removeAll();
     List<ShoppingCart> findAll();
 }

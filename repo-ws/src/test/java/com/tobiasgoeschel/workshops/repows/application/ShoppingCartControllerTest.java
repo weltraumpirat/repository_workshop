@@ -2,13 +2,7 @@ package com.tobiasgoeschel.workshops.repows.application;
 
 import com.tobiasgoeschel.workshops.repows.RepoWsApplication;
 import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
-import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
-import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
-import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItemFactory;
-import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepository;
-import com.tobiasgoeschel.workshops.repows.persistence.order.OrderCrudRepository;
-import com.tobiasgoeschel.workshops.repows.persistence.order.OrderEntity;
-import com.tobiasgoeschel.workshops.repows.persistence.order.OrderPositionEntity;
+import com.tobiasgoeschel.workshops.repows.domain.*;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.*;
 import org.assertj.core.data.TemporalUnitOffset;
@@ -32,11 +26,11 @@ class ShoppingCartControllerTest {
     private static final TemporalUnitOffset DATETIME_PRECISION = within( 500, ChronoUnit.MILLIS );
 
     @Autowired
-    private ShoppingCartController     controller;
+    private ShoppingCartController controller;
     @Autowired
-    private ShoppingCartCrudRepository cartRepository;
+    private ShoppingCartRepository cartRepository;
     @Autowired
-    private OrderCrudRepository        orderRepository;
+    private OrderRepository        orderRepository;
 
     @Nested
     class GivenTheRepositoryIsEmpty {
@@ -278,16 +272,14 @@ class ShoppingCartControllerTest {
                     @BeforeEach
                     public void setUp() {
                         final ShoppingCartItem item = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
-
                         controller.addItem( cartId, item );
+
                         final ShoppingCartItem otherItem = ShoppingCartItemFactory.create(  "Thing", toMoney("EUR 10"));
-
                         controller.addItem( cartId, otherItem );
-
                         items = List.of(item, otherItem);
+
                         controller.checkOutShoppingCart( cartId );
                     }
-
 
                     @Test
                     void shouldDeleteTheCart() {
@@ -296,19 +288,20 @@ class ShoppingCartControllerTest {
 
                     @Test
                     void shouldCreateAnOrderWithACurrentTimestampAndOneAccumulatedPositionAndASumTotal() {
-                        final Iterable<OrderEntity> orders = orderRepository.findAll();
+                        final List<Order> orders = orderRepository.findAll();
                         assertThat( orders ).hasSize( 1 );
-                        final OrderEntity order = orders.iterator().next();
+                        final Order order = orders.get(0);
                         assertThat(order.getPositions()).hasSize( 1 );
-                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 2 ) ) ).isCloseToUtcNow( DATETIME_PRECISION );
+                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 2 ) ) )
+                            .isCloseToUtcNow( DATETIME_PRECISION );
 
-                        final OrderPositionEntity position = order.getPositions().iterator().next();
+                        final OrderPosition position = order.getPositions().get(0);
                         assertThat( position.getItemName() ).isEqualTo( items.get( 0 ).getLabel());
                         assertThat( position.getItemName() ).isEqualTo( items.get( 1 ).getLabel());
-                        assertThat( position.getCombinedPrice() ).isEqualTo( "EUR 20.00" );
-                        assertThat( position.getSinglePrice() ).isEqualTo( "EUR 10.00" );
+                        assertThat( position.getCombinedPrice() ).isEqualTo( toMoney("EUR 20.00"));
+                        assertThat( position.getSinglePrice() ).isEqualTo( toMoney("EUR 10.00") );
 
-                        assertThat(order.getTotal()).isEqualTo( "EUR 20.00" );
+                        assertThat(order.getTotal()).isEqualTo( toMoney("EUR 20.00" ));
                     }
                 }
             }
@@ -328,8 +321,9 @@ class ShoppingCartControllerTest {
 
         @AfterEach
         public void tearDown() {
-            cartRepository.deleteAll();
-            orderRepository.deleteAll();
+            System.out.println("tearDown");
+            orderRepository.removeAll();
+            cartRepository.removeAll();
         }
     }
 }

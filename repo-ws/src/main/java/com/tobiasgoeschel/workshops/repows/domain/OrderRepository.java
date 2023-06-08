@@ -8,4 +8,5 @@ public interface OrderRepository {
     void addAll( List<Order> orders );
     void remove(Order order);
     void removeAll(List<Order> orders);
+    void removeAll();
 }
