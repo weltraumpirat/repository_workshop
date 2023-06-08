@@ -4,11 +4,10 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.tobiasgoeschel.workshops.repows.adapter.*;
-import com.tobiasgoeschel.workshops.repows.domain.CheckOutService;
-import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartRepositoryJpa;
-import com.tobiasgoeschel.workshops.repows.persistence.order.OrderRepositoryJpa;
 import com.tobiasgoeschel.workshops.repows.usecase.*;
+import com.tobiasgoeschel.workshops.repows.adapter.*;
+import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepository;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,40 +16,39 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class RepoWSConfig {
     @Bean ShoppingCartsQuery createShoppingCartsQuery(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new ShoppingCartsQueryImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new ShoppingCartsQueryImpl( crudRepository );
     }
 
     @Bean ShoppingCartItemsQuery createShoppingCartItemsQuery(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new ShoppingCartItemsQueryImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new ShoppingCartItemsQueryImpl( crudRepository );
     }
 
     @Bean CreateEmptyShoppingCartCommand createEmptyShoppingCartCommand(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new CreateEmptyShoppingCartCommandImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new CreateEmptyShoppingCartCommandImpl( crudRepository );
     }
 
     @Bean DeleteShoppingCartCommand deleteShoppingCartCommand(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new DeleteShoppingCartCommandImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new DeleteShoppingCartCommandImpl( crudRepository );
     }
 
     @Bean AddShoppingCartItemCommand addShoppingCartItemCommand(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new AddShoppingCartItemCommandImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new AddShoppingCartItemCommandImpl( crudRepository );
     }
 
     @Bean RemoveShoppingCartItemCommand removeShoppingCartItemCommand(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa ) {
-        return new RemoveShoppingCartItemCommandImpl( repositoryJpa );
+        @Autowired final ShoppingCartCrudRepository crudRepository ) {
+        return new RemoveShoppingCartItemCommandImpl( crudRepository );
     }
 
     @Bean CheckOutShoppingCartCommand checkOutShoppingCartCommand(
-        @Autowired final ShoppingCartRepositoryJpa repositoryJpa,
-        @Autowired final OrderRepositoryJpa orderRepositoryJpa ) {
-        final CheckOutService service = new CheckOutService( repositoryJpa, orderRepositoryJpa );
-        return new CheckOutShoppingCartCommandImpl( service );
+        @Autowired final ShoppingCartCrudRepository crudRepository,
+        @Autowired final OrderCrudRepository orderCrudRepository ) {
+        return new CheckOutShoppingCartCommandImpl( crudRepository, orderCrudRepository );
     }
 
     @Bean
