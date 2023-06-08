@@ -3,6 +3,7 @@ package com.tobiasgoeschel.workshops.repows.application;
 import com.tobiasgoeschel.workshops.repows.adapter.*;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
+import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartRepositoryJpa;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,13 +14,14 @@ import java.util.UUID;
 
 @RestController
 public class ShoppingCartController {
-    private final ShoppingCartsQuery shoppingCartsQuery;
-    private final ShoppingCartItemsQuery shoppingCartItemsQuery;
+    private final ShoppingCartsQuery             shoppingCartsQuery;
+    private final ShoppingCartItemsQuery         shoppingCartItemsQuery;
     private final CreateEmptyShoppingCartCommand createEmptyShoppingCartCommand;
-    private final DeleteShoppingCartCommand deleteShoppingCartCommand;
-    private final AddShoppingCartItemCommand addShoppingCartItemCommand;
-    private final RemoveShoppingCartItemCommand removeShoppingCartItemCommand;
-    private final CheckOutShoppingCartCommand checkOutShoppingCartCommand;
+    private final DeleteShoppingCartCommand      deleteShoppingCartCommand;
+    private final AddShoppingCartItemCommand     addShoppingCartItemCommand;
+    private final RemoveShoppingCartItemCommand  removeShoppingCartItemCommand;
+    private final CheckOutShoppingCartCommand    checkOutShoppingCartCommand;
+    private final ShoppingCartRepositoryJpa      shoppingCartRepositoryJpa;
 
     public ShoppingCartController( final ShoppingCartsQuery shoppingCartsQuery,
                                    final ShoppingCartItemsQuery shoppingCartItemsQuery,
@@ -27,7 +29,8 @@ public class ShoppingCartController {
                                    final DeleteShoppingCartCommand deleteShoppingCartCommand,
                                    final AddShoppingCartItemCommand addShoppingCartItemCommand,
                                    final RemoveShoppingCartItemCommand removeShoppingCartItemCommand,
-                                   final CheckOutShoppingCartCommand checkOutShoppingCartCommand ) {
+                                   final CheckOutShoppingCartCommand checkOutShoppingCartCommand,
+                                   final ShoppingCartRepositoryJpa shoppingCartRepositoryJpa ) {
         this.shoppingCartsQuery = shoppingCartsQuery;
         this.shoppingCartItemsQuery = shoppingCartItemsQuery;
         this.createEmptyShoppingCartCommand = createEmptyShoppingCartCommand;
@@ -35,6 +38,7 @@ public class ShoppingCartController {
         this.addShoppingCartItemCommand = addShoppingCartItemCommand;
         this.removeShoppingCartItemCommand = removeShoppingCartItemCommand;
         this.checkOutShoppingCartCommand = checkOutShoppingCartCommand;
+        this.shoppingCartRepositoryJpa = shoppingCartRepositoryJpa;
     }
 
 
@@ -45,7 +49,7 @@ public class ShoppingCartController {
 
     @GetMapping( "/api/cart/{cartId}" )
     public List<ShoppingCartItem> getCartItems( @PathVariable final UUID cartId ) {
-        return shoppingCartItemsQuery.invoke(cartId);
+        return shoppingCartItemsQuery.invoke( cartId );
     }
 
     @PostMapping( "/api/cart" )
@@ -56,22 +60,24 @@ public class ShoppingCartController {
     @DeleteMapping( "/api/cart/{cartId}" )
     @Transactional
     public void deleteCart( @PathVariable final UUID cartId ) {
-        deleteShoppingCartCommand.invoke(cartId);
+        deleteShoppingCartCommand.invoke( cartId );
     }
 
     @PostMapping( "/api/cart/{cartId}" )
     public void addItem( @PathVariable final UUID cartId, @RequestBody final ShoppingCartItem item ) {
-       addShoppingCartItemCommand.invoke(cartId, item);
+        addShoppingCartItemCommand.invoke( cartId, item );
+        shoppingCartRepositoryJpa.flush();
     }
 
     @DeleteMapping( "/api/cart/{cartId}/{itemId}" )
     public void removeItem( @PathVariable final UUID cartId, @PathVariable UUID itemId ) {
-        removeShoppingCartItemCommand.invoke(cartId, itemId);
+        removeShoppingCartItemCommand.invoke( cartId, itemId );
+        shoppingCartRepositoryJpa.flush();
     }
 
     @PostMapping( "/api/cart/{cartId}/checkout" )
     @Transactional
     public UUID checkOutShoppingCart( @PathVariable final UUID cartId ) {
-        return checkOutShoppingCartCommand.invoke(cartId);
-   }
+        return checkOutShoppingCartCommand.invoke( cartId );
+    }
 }
