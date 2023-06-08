@@ -11,8 +11,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OrderFactory {
-    public static Order create( CurrencyUnit currencyUnit) {
+    public static Order create( final CurrencyUnit currencyUnit) {
         return new Order( UUID.randomUUID(), Money.zero(currencyUnit), new ArrayList<>() );
+    }
+
+    public static Order create(final ShoppingCart cart) {
+        final Order order = OrderFactory.create(cart.getItems().get( 0 ).getPrice().getCurrencyUnit());
+        cart.getItems().forEach( ( order::addItem ) );
+        return order;
     }
 
     public static Order restore( OrderEntity entity ) {

@@ -1,16 +1,17 @@
 package com.tobiasgoeschel.workshops.repows.usecase;
 
 import com.tobiasgoeschel.workshops.repows.adapter.CheckOutShoppingCartCommand;
-import com.tobiasgoeschel.workshops.repows.domain.*;
+import com.tobiasgoeschel.workshops.repows.domain.Order;
+import com.tobiasgoeschel.workshops.repows.domain.OrderFactory;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartFactory;
 import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepository;
 import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartEntity;
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderCrudRepository;
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderEntity;
-import org.joda.money.CurrencyUnit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.UUID;
 
 public class CheckOutShoppingCartCommandImpl implements CheckOutShoppingCartCommand {
@@ -28,12 +29,8 @@ public class CheckOutShoppingCartCommandImpl implements CheckOutShoppingCartComm
         if( jpaCartsRepo.existsById( cartId ) ) {
             final ShoppingCartEntity cartEntity = jpaCartsRepo.findById( cartId ).orElseThrow();
             final ShoppingCart cart = ShoppingCartFactory.restore( cartEntity );
-
-            final List<ShoppingCartItem> items = cart.getItems();
-            if( items.size()>0 ) {
-                final Order order = OrderFactory.create( CurrencyUnit.EUR);
-                items.forEach( ( order::addItem ) );
-
+            if( cart.getItems().size()>0 ) {
+                final Order order = OrderFactory.create(cart );
                 final OrderEntity entity = OrderEntity.fromOrder(order);
 
                 jpaOrdersRepo.save( entity );
