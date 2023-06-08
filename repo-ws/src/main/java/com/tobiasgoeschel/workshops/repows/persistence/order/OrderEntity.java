@@ -1,6 +1,8 @@
 package com.tobiasgoeschel.workshops.repows.persistence.order;
 
+import com.tobiasgoeschel.workshops.repows.domain.Order;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class OrderEntity {
     @Id
@@ -18,7 +21,7 @@ public class OrderEntity {
     private String                    total;
     @Column( columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" )
     private LocalDateTime             timestamp;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     private List<OrderPositionEntity> positions;
 
     public OrderEntity( final UUID id, final String total, final List<OrderPositionEntity> positions ) {
@@ -26,5 +29,16 @@ public class OrderEntity {
         this.total = total;
         this.positions = positions;
         this.timestamp = LocalDateTime.now();
+    }
+
+    public static OrderEntity fromOrder( final Order order ) {
+        return new OrderEntity(
+            order.getId(),
+            order.getTotal().toString(),
+            order.getTimestamp(),
+            order.getPositions().stream()
+                .map( OrderPositionEntity::fromOrderPosition )
+                .toList()
+        );
     }
 }

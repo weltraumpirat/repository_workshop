@@ -13,4 +13,8 @@ import java.util.UUID;
 public class ShoppingCart {
     private UUID                   id;
     private List<ShoppingCartItem> items;
+
+    public void addItem( final ShoppingCartItem item ) {
+        this.items.add( item );
+    }
 }
