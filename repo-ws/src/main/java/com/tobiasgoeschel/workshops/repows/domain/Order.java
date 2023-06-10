@@ -1,10 +1,16 @@
 package com.tobiasgoeschel.workshops.repows.domain;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -38,5 +44,22 @@ public class Order {
                                 .map( OrderPosition::getCombinedPrice )
                                 .reduce( Money::plus )
                                 .orElse( Money.zero( CurrencyUnit.EUR ) );
+    }
+
+    public static class MoneyDeserializer extends StdDeserializer<Money> {
+      public MoneyDeserializer() {
+        this(Money.class);
+      }
+      public MoneyDeserializer( final Class<Money> vc ) {
+        super( vc );
+      }
+
+      @Override public Money deserialize( final JsonParser p, final DeserializationContext ctxt )
+          throws IOException {
+        JsonNode node = p.getCodec().readTree( p );
+        final String text = node.asText();
+        return MoneyMapper.toMoney( text );
+      }
+
     }
 }
