@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows.persistence.order;
+package com.tobiasgoeschel.workshops.repows.application.persistence.order;
 
 import com.tobiasgoeschel.workshops.repows.domain.Order;
 import jakarta.persistence.*;

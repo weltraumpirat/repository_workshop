@@ -1,7 +1,7 @@
 package com.tobiasgoeschel.workshops.repows.domain;
 
 import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
-import com.tobiasgoeschel.workshops.repows.persistence.order.OrderPositionEntity;
+import com.tobiasgoeschel.workshops.repows.application.persistence.order.OrderPositionEntity;
 import org.joda.money.Money;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package com.tobiasgoeschel.workshops.repows.domain;
 
 import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
-import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartItemEntity;
+import com.tobiasgoeschel.workshops.repows.application.persistence.cart.ShoppingCartItemEntity;
 import org.joda.money.Money;
 
 import java.util.UUID;

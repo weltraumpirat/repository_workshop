@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows.persistence.cart;
+package com.tobiasgoeschel.workshops.repows.application.persistence.cart;
 
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartFactory;
