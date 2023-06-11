@@ -3,6 +3,7 @@ package com.tobiasgoeschel.workshops.repows.application;
 import com.tobiasgoeschel.workshops.repows.adapter.*;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
+import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItemFactory;
 import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartRepositoryJpa;
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderRepositoryJpa;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,8 @@ public class ShoppingCartController {
 
     @PostMapping( "/api/cart/{cartId}" )
     public void addItem( @PathVariable final UUID cartId, @RequestBody final ShoppingCartItem item ) {
-        addShoppingCartItemCommand.invoke( cartId, item );
+        ShoppingCartItem itemToAdd = ShoppingCartItemFactory.create(item.getLabel(), item.getPrice());
+        addShoppingCartItemCommand.invoke( cartId, itemToAdd );
         shoppingCartRepositoryJpa.flush();
     }
 
