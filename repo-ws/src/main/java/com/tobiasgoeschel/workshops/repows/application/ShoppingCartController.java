@@ -70,8 +70,8 @@ public class ShoppingCartController {
 
     @PostMapping( "/api/cart/{cartId}" )
     public void addItem( @PathVariable final UUID cartId, @RequestBody final ShoppingCartItem item ) {
-        ShoppingCartItem itemToAdd = ShoppingCartItemFactory.create(item.getLabel(), item.getPrice());
-        addShoppingCartItemCommand.invoke( cartId, itemToAdd );
+        ShoppingCartItem itemWithNewId = ShoppingCartItemFactory.create(item.getLabel(), item.getPrice());
+        addShoppingCartItemCommand.invoke(cartId, item.getId() != null ? item : itemWithNewId);
         shoppingCartRepositoryJpa.flush();
     }
 
