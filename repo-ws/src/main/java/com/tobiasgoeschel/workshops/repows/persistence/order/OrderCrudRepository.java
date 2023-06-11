@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows.application.persistence.order;
+package com.tobiasgoeschel.workshops.repows.persistence.order;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

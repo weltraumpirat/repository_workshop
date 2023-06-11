@@ -4,8 +4,8 @@ import com.tobiasgoeschel.workshops.repows.adapter.*;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItemFactory;
-import com.tobiasgoeschel.workshops.repows.application.persistence.cart.ShoppingCartRepositoryJpa;
-import com.tobiasgoeschel.workshops.repows.application.persistence.order.OrderRepositoryJpa;
+import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartRepositoryJpa;
+import com.tobiasgoeschel.workshops.repows.persistence.order.OrderRepositoryJpa;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

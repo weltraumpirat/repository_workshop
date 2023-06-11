@@ -1,4 +1,4 @@
-package com.tobiasgoeschel.workshops.repows.application.persistence.cart;
+package com.tobiasgoeschel.workshops.repows.persistence.cart;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

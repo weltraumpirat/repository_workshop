@@ -1,6 +1,6 @@
 package com.tobiasgoeschel.workshops.repows.domain;
 
-import com.tobiasgoeschel.workshops.repows.application.persistence.cart.ShoppingCartEntity;
+import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartEntity;
 
 import java.util.ArrayList;
 import java.util.List;
