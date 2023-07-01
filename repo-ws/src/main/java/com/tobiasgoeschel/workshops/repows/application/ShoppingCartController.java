@@ -59,13 +59,16 @@ public class ShoppingCartController {
 
     @PostMapping( "/api/cart" )
     public ShoppingCart createEmptyCart() {
-        return createEmptyShoppingCartCommand.invoke();
+        final ShoppingCart cart = createEmptyShoppingCartCommand.invoke();
+        shoppingCartRepositoryJpa.flush();
+        return cart;
     }
 
     @DeleteMapping( "/api/cart/{cartId}" )
     @Transactional
     public void deleteCart( @PathVariable final UUID cartId ) {
         deleteShoppingCartCommand.invoke( cartId );
+        shoppingCartRepositoryJpa.flush();
     }
 
     @PostMapping( "/api/cart/{cartId}" )
