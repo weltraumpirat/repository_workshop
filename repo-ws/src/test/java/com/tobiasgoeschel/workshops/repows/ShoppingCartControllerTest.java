@@ -6,8 +6,6 @@ import com.tobiasgoeschel.workshops.repows.cart.ShoppingCartItemEntity;
 import com.tobiasgoeschel.workshops.repows.order.OrderCrudRepository;
 import com.tobiasgoeschel.workshops.repows.order.OrderEntity;
 import com.tobiasgoeschel.workshops.repows.order.OrderPositionEntity;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.*;
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +19,9 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest()
 class ShoppingCartControllerTest {
@@ -305,7 +306,7 @@ class ShoppingCartControllerTest {
                         assertThat( orders ).hasSize( 1 );
                         final OrderEntity order = orders.iterator().next();
                         assertThat(order.getPositions()).hasSize( 1 );
-                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 2 ) ) ).isCloseToUtcNow( DATETIME_PRECISION );
+                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 1 ) ) ).isCloseToUtcNow( DATETIME_PRECISION );
 
                         final OrderPositionEntity position = order.getPositions().iterator().next();
                         assertThat( position.getItemName() ).isEqualTo( items.get( 0 ).getLabel());
