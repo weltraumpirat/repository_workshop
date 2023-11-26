@@ -1,7 +1,6 @@
 package com.tobiasgoeschel.workshops.repows.application;
 
 import com.tobiasgoeschel.workshops.repows.RepoWsApplication;
-import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItem;
 import com.tobiasgoeschel.workshops.repows.domain.ShoppingCartItemFactory;
@@ -9,8 +8,6 @@ import com.tobiasgoeschel.workshops.repows.persistence.cart.ShoppingCartCrudRepo
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderCrudRepository;
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderEntity;
 import com.tobiasgoeschel.workshops.repows.persistence.order.OrderPositionEntity;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.*;
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +22,10 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+
+import static com.tobiasgoeschel.workshops.repows.application.config.MoneyMapper.toMoney;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(classes = { RepoWsApplication.class, ShoppingCartController.class } )
 @ComponentScan(basePackages = {"com.tobiasgoeschel.workshops.repows.application", "com.tobiasgoeschel.workshops.repows.persistence"})
@@ -300,7 +301,7 @@ class ShoppingCartControllerTest {
                         assertThat( orders ).hasSize( 1 );
                         final OrderEntity order = orders.iterator().next();
                         assertThat(order.getPositions()).hasSize( 1 );
-                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 2 ) ) ).isCloseToUtcNow( DATETIME_PRECISION );
+                        assertThat( order.getTimestamp().atOffset( ZoneOffset.ofHours( 1 ) ) ).isCloseToUtcNow( DATETIME_PRECISION );
 
                         final OrderPositionEntity position = order.getPositions().iterator().next();
                         assertThat( position.getItemName() ).isEqualTo( items.get( 0 ).getLabel());
