@@ -9,8 +9,19 @@ import com.tobiasgoeschel.workshops.repows.domain.ShoppingCart;
 import com.tobiasgoeschel.workshops.repows.lambda.persistence.ShoppingCartRepositoryDynamoDB;
 import com.tobiasgoeschel.workshops.repows.usecase.CreateEmptyShoppingCartCommandImpl;
 
-public class CreateEmptyCartHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    private final CreateEmptyShoppingCartCommand command = new CreateEmptyShoppingCartCommandImpl(new ShoppingCartRepositoryDynamoDB());
+@SuppressWarnings("unused")
+public class PostShoppingCartHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+    private final CreateEmptyShoppingCartCommand command;
+
+    /** Constructor for tests. Pass the mocked command. **/
+    public PostShoppingCartHandler(final CreateEmptyShoppingCartCommand command) {
+        this.command = command;
+    }
+
+    /** Noargs constructor for Lambda invocation.**/
+    public PostShoppingCartHandler() {
+        this.command = new CreateEmptyShoppingCartCommandImpl(new ShoppingCartRepositoryDynamoDB());
+    }
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(
