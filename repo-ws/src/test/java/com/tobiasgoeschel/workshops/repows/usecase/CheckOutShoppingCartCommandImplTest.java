@@ -107,7 +107,7 @@ class CheckOutShoppingCartCommandImplTest {
                         assertThat(orders).hasSize(1);
                         final Order order = orders.get(0);
                         assertThat(order.getPositions()).hasSize(1);
-                        assertThat(order.getTimestamp().atOffset(ZoneOffset.ofHours(2)))
+                        assertThat(order.getTimestamp().atOffset(ZoneOffset.ofHours(1 )))
                                 .isCloseToUtcNow(DATETIME_PRECISION);
 
                         final OrderPosition position = order.getPositions().get(0);
